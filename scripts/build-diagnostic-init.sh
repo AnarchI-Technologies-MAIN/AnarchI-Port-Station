@@ -11,7 +11,7 @@ OUT="$(realpath -m "$OUT")"
 	echo 'Diagnostic-init output must remain beneath the repository build directory.' >&2
 	exit 64
 }
-[[ "$OUT" != *[[:space:]]* && "$OUT" != *['&|\\']* ]] || {
+[[ "$OUT" != *[[:space:]]* && "$OUT" != *'&'* && "$OUT" != *'|'* && "$OUT" != *\\* ]] || {
 	echo 'Whitespace and shell metacharacters are not supported in the diagnostic-init output path.' >&2
 	exit 64
 }
