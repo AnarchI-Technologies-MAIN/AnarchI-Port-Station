@@ -28,8 +28,8 @@
 
 ```text
 === AWV1 NATIVE BOOT TEST PASSED ===
-Linux 7.2.8 reached PID 1 from the USB kernel.
-Disk 0 has not been mounted. Power off to end this test.
+Linux reached diagnostic PID 1 from the embedded initramfs.
+This PID 1 will not mount or write storage. Power off to end this test.
 ```
 
 ## Failure classification
@@ -39,4 +39,4 @@ Disk 0 has not been mounted. Power off to end this test.
 - Immediate return to firmware: EFI-stub execution failure.
 - Kernel text followed by panic before PID 1: kernel/hardware/initramfs failure.
 - Blank screen with active machine: graphics/console qualification failure.
-- Pass banner: Phase 1 kernel boot gate passed; host-storage verification still remains.
+- Pass banner: diagnostic PID 1 and the visible console path passed; post-boot host-storage verification still remains mandatory.

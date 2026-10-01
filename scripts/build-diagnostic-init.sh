@@ -5,6 +5,18 @@ ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 OUT="${1:-$ROOT/build/diagnostic-init}"
 CLANG="${CLANG:-clang}"
 
+[[ $# -le 1 ]] || { echo 'Only one diagnostic-init output path may be requested.' >&2; exit 64; }
+OUT="$(realpath -m "$OUT")"
+[[ "$OUT" == "$ROOT/build" || "$OUT" == "$ROOT/build/"* ]] || {
+	echo 'Diagnostic-init output must remain beneath the repository build directory.' >&2
+	exit 64
+}
+[[ "$OUT" != *[[:space:]]* && "$OUT" != *'&'* && "$OUT" != *'|'* && "$OUT" != *\\* ]] || {
+	echo 'Whitespace and shell metacharacters are not supported in the diagnostic-init output path.' >&2
+	exit 64
+}
+command -v "$CLANG" >/dev/null 2>&1 || { echo "Clang not found: $CLANG" >&2; exit 66; }
+
 mkdir -p "$OUT"
 
 "$CLANG" \

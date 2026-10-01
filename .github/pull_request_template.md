@@ -8,7 +8,8 @@ Describe the invariant, failure mode, or qualified capability changed by this pu
 - [ ] Local verification passed
 - [ ] No secrets, recovery material, workstation inventory, or private evidence included
 - [ ] Observed results are separated from projections
-- [ ] Disk 0, non-USB, formatting, and boot-order refusal boundaries remain intact
+- [ ] Disk 0, non-USB, boot/system, offline/read-only, non-GPT, ambiguous-FAT32, formatting, and boot-order refusal boundaries remain intact
+- [ ] EFI validation, target/source revalidation, volume-GUID addressing, staged verification, rollback-copy verification, and restoration verification remain intact
 
 ## Risk
 
