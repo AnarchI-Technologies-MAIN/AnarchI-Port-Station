@@ -23,6 +23,7 @@ try {
 
     & "$PSScriptRoot\verify-public-safety.ps1"
     & "$PSScriptRoot\verify-relative-links.ps1"
+    & "$root\tests\Install-TestEfi.Behavior.Tests.ps1"
 
     $bash = Get-Command bash -ErrorAction SilentlyContinue
     if ($bash) {
