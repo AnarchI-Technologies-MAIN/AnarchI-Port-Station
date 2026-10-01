@@ -15,10 +15,18 @@ The AWV1 build reached all of the following milestones on a native Windows host:
 9. A second kernel containing the diagnostic initramfs completed successfully.
 10. The USB copy was read back and matched the source SHA-256.
 11. The resulting image identified as a PE32+ EFI application.
+12. Physical Trial 1 produced a stable backlit black screen and no visible banner.
+13. Candidate 2 rebuilt with `DRM_SIMPLEDRM`, DRM fbdev emulation, framebuffer console, and simple framebuffer support.
+14. Candidate 2 build `#4` embeds `console=tty0 loglevel=7 init=/init` and is installed with matching source/destination SHA-256 `DE36F704867BA9DF8C59F9206FD065263FA59E3D4ADB960DFD2F4F6ED6A3F801`.
+15. The embedded static PID 1 was extracted from the linked kernel and matched the independently built SHA-256 `41AD1F858232FCECD8CFC9DB4B60C623B895D743E4C55E6B21A3F58F6743934D`.
 
 ## Important evidence boundary
 
 Compilation and USB installation do not prove physical boot. Phase 1 remains open until the expected PID 1 banner is observed on target hardware and the host's internal storage is verified unchanged afterward.
+
+Trial 1 is evidence of a graphics/console qualification failure, not proof that the kernel failed to execute. Candidate 2 has not yet been physically tested.
+
+The public repository does not yet contain a complete kernel-source patch series or the full qualified kernel configuration. The build wrapper alone is therefore insufficient to reproduce the currently installed binary from pristine upstream source. Treat this as an open provenance gate, not a completed reproducible-build claim.
 
 ## Portability seams encountered
 

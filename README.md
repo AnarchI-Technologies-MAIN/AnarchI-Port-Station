@@ -1,7 +1,7 @@
 # AnarchI Port-Station
 
 **Portable Workstation System**<br>
-**AWV1 — Ignition Candidate 1**
+**AWV1 — Ignition Candidate 2**
 
 > Carry your system. Command the machine.
 
@@ -20,19 +20,21 @@ The current AWV1 milestone has completed these gates:
 - Successful creation and read-back verification of a removable-media UEFI fallback image at `EFI/BOOT/BOOTX64.EFI`.
 - SHA-256 verification between the built image and the USB copy.
 - Preservation of the Windows boot configuration and internal disk partition map.
+- Physical Trial 1 reached a stable backlit black screen, demonstrating a visible-console qualification failure.
+- Candidate 2 adds EFI/simple framebuffer console support and an explicit diagnostic command line; it awaits physical retest.
 
-The next unresolved gate is physical native boot testing on the target hardware. Until that succeeds, this repository describes an **Ignition Candidate**, not a boot-qualified workstation.
+The next unresolved gate is Candidate 2 physical native boot testing on the target hardware. Until that succeeds, this repository describes an **Ignition Candidate**, not a boot-qualified workstation.
 
 ## What it can do now
 
 - Reproduce the qualified Linux kernel build command on the documented Windows/MSYS2 toolchain.
 - Build a PE32+ x86-64 Linux EFI-stub kernel.
 - Embed a tiny initramfs that reaches PID 1 without mounting persistent storage.
-- Produce a diagnostic boot image that prints an unmistakable pass banner.
+- Produce a diagnostic boot image intended to print an unmistakable pass banner when a qualified console is available.
 - Install that image into the standard removable-media UEFI fallback path on an already prepared FAT32 USB volume.
-- Reject Disk 0 and reject non-USB targets in the included installer.
-- Verify source and destination images by SHA-256 after copying.
-- Preserve the host's permanent boot order by relying on its one-time UEFI boot menu.
+- Reject Disk 0, non-USB, boot/system, offline, read-only, non-GPT, ambiguously mounted, or unstably identified targets in the included installer.
+- Validate the EFI image, stage it through the qualified volume identity, and verify the source, rollback copy, staged image, installed image, and any restoration with SHA-256.
+- Leave firmware boot configuration untouched; the documented procedure recommends the host's one-time UEFI boot menu.
 
 ## What it cannot do yet
 
@@ -52,7 +54,7 @@ The project treats refusal as a system property, not a warning label.
 
 - It refuses to select or modify internal Disk 0 during removable-media installation.
 - It refuses to format, repartition, or erase a device implicitly.
-- It refuses to change the permanent firmware boot order.
+- The included installer has no operation that changes permanent firmware boot order.
 - It refuses to mount or write host storage during the current diagnostic boot.
 - It refuses to claim a qualification result that has not been observed and recorded.
 - It refuses to describe an unsigned development image as Secure-Boot compatible.
@@ -118,8 +120,10 @@ Harden ownership boundaries, signing infrastructure, reproducible releases, meas
 
 ```text
 boot-test/     Minimal storage-inert PID 1 diagnostic
+config/        Reviewable Kconfig fragments for qualified candidate changes
 docs/          Architecture, safety model, status, and test procedure
 scripts/       Reproducible build and guarded USB installation tools
+tests/         Hardware-free behavioral safety contracts
 ```
 
 ## First native boot test
@@ -137,7 +141,7 @@ Read [docs/BOOT-TEST.md](docs/BOOT-TEST.md) completely before testing. The short
 
 ## Build status
 
-See [docs/CURRENT-STATE.md](docs/CURRENT-STATE.md) for the precise evidence boundary and known portability repairs.
+See [docs/CURRENT-STATE.md](docs/CURRENT-STATE.md) and [docs/IGNITION-TRIALS.md](docs/IGNITION-TRIALS.md) for the precise evidence boundary, known portability repairs, and physical-trial record.
 
 ## Security and safety
 
