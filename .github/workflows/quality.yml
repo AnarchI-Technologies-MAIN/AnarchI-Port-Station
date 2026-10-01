@@ -68,16 +68,12 @@ jobs:
             }
           }
           if ($failed) { exit 1 }
-      - name: Verify installer refusal invariants
+
+  installer-behavior:
+    name: installer-behavior
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Exercise guarded installer behavioral contracts
         shell: pwsh
-        run: |
-          $source = Get-Content scripts/install-test-efi.ps1 -Raw
-          @(
-            "Disk 0 is permanently refused",
-            "BusType -ne 'USB'",
-            "IsBoot -or `$disk.IsSystem",
-            "FileSystem -eq 'FAT32'",
-            "Get-FileHash -Algorithm SHA256"
-          ) | ForEach-Object {
-            if (-not $source.Contains($_)) { throw "Missing invariant: $_" }
-          }
+        run: ./tests/Install-TestEfi.Behavior.Tests.ps1
