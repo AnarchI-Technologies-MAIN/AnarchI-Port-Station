@@ -1,0 +1,83 @@
+name: quality
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: read
+
+concurrency:
+  group: quality-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  source-integrity:
+    name: source-integrity
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Reject whitespace errors
+        run: git diff --check HEAD^ HEAD || git diff --check --cached
+      - name: Check shell syntax
+        run: bash -n scripts/*.sh hooks/pre-push
+      - name: Lint shell tooling
+        run: shellcheck scripts/*.sh hooks/pre-push
+      - name: Scan prohibited public content
+        shell: pwsh
+        run: ./scripts/verify-public-safety.ps1
+      - name: Check documentation links
+        shell: pwsh
+        run: ./scripts/verify-relative-links.ps1
+
+  diagnostic-init:
+    name: diagnostic-init
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install linker
+        run: sudo apt-get update && sudo apt-get install --yes lld
+      - name: Build storage-inert PID 1
+        run: ./scripts/build-diagnostic-init.sh
+      - name: Verify executable type and banner
+        run: |
+          file build/diagnostic-init/init | grep 'ELF 64-bit LSB executable'
+          strings build/diagnostic-init/init | grep 'AWV1 NATIVE BOOT TEST PASSED'
+
+  powershell-safety:
+    name: powershell-safety
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Parse PowerShell scripts
+        shell: pwsh
+        run: |
+          $failed = $false
+          Get-ChildItem scripts -Filter *.ps1 | ForEach-Object {
+            $errors = $null
+            [System.Management.Automation.Language.Parser]::ParseFile(
+              $_.FullName,
+              [ref]$null,
+              [ref]$errors
+            ) | Out-Null
+            if ($errors) {
+              $errors | Format-List
+              $failed = $true
+            }
+          }
+          if ($failed) { exit 1 }
+      - name: Verify installer refusal invariants
+        shell: pwsh
+        run: |
+          $source = Get-Content scripts/install-test-efi.ps1 -Raw
+          @(
+            "Disk 0 is permanently refused",
+            "BusType -ne 'USB'",
+            "IsBoot -or `$disk.IsSystem",
+            "FileSystem -eq 'FAT32'",
+            "Get-FileHash -Algorithm SHA256"
+          ) | ForEach-Object {
+            if (-not $source.Contains($_)) { throw "Missing invariant: $_" }
+          }

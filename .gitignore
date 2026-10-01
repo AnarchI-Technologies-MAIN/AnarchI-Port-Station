@@ -1,0 +1,17 @@
+*.log
+*.key
+*.pem
+*.pfx
+*.p12
+*.efi
+*.img
+*.iso
+bzImage*
+vmlinux*
+System.map
+.config
+build/
+private/
+evidence/
+workstation-inventory*
+*recovery*

@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+root="$(git rev-parse --show-toplevel)"
+pwsh -NoProfile -File "$root/scripts/verify.ps1"
