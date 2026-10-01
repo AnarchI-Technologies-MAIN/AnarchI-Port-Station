@@ -14,8 +14,8 @@ $patterns = @(
 )
 
 $files = Get-ChildItem $root -Recurse -File | Where-Object {
-    $relative = $_.FullName.Substring($root.Length).TrimStart('\', '/')
-    $relative -ne 'scripts\verify-public-safety.ps1' -and
+    $relative = $_.FullName.Substring($root.Length).TrimStart('\', '/').Replace('\', '/')
+    $relative -ne 'scripts/verify-public-safety.ps1' -and
     -not ($excluded | Where-Object { $relative -eq $_ -or $relative.StartsWith("$_\") -or $relative.StartsWith("$_/") })
 }
 
