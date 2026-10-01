@@ -18,7 +18,7 @@ jobs:
     name: source-integrity
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - name: Reject whitespace errors
         run: git diff --check HEAD^ HEAD || git diff --check --cached
       - name: Check shell syntax
@@ -36,7 +36,7 @@ jobs:
     name: diagnostic-init
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - name: Install linker
         run: sudo apt-get update && sudo apt-get install --yes lld
       - name: Build storage-inert PID 1
@@ -50,7 +50,7 @@ jobs:
     name: powershell-safety
     runs-on: windows-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - name: Parse PowerShell scripts
         shell: pwsh
         run: |
@@ -73,7 +73,7 @@ jobs:
     name: installer-behavior
     runs-on: windows-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - name: Exercise guarded installer behavioral contracts
         shell: pwsh
         run: ./tests/Install-TestEfi.Behavior.Tests.ps1
