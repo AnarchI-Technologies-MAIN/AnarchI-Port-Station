@@ -19,12 +19,16 @@ The AWV1 build reached all of the following milestones on a native Windows host:
 13. Candidate 2 rebuilt with `DRM_SIMPLEDRM`, DRM fbdev emulation, framebuffer console, and simple framebuffer support.
 14. Candidate 2 build `#4` embeds `console=tty0 loglevel=7 init=/init` and is installed with matching source/destination SHA-256 `DE36F704867BA9DF8C59F9206FD065263FA59E3D4ADB960DFD2F4F6ED6A3F801`.
 15. The embedded static PID 1 was extracted from the linked kernel and matched the independently built SHA-256 `41AD1F858232FCECD8CFC9DB4B60C623B895D743E4C55E6B21A3F58F6743934D`.
+16. Physical Trial 2 displayed the exact AWV1 diagnostic PID 1 pass banner on the target hardware.
+17. The noninteractive screen behavior matched the intentionally shell-free PID 1 design.
+18. Windows booted normally afterward; Disk 0 remained the healthy internal boot/system disk and Disk 1 remained the healthy non-boot/non-system USB target.
+19. Post-trial source and USB SHA-256 remained identical, with no installer staging or rollback residue.
 
 ## Important evidence boundary
 
-Compilation and USB installation do not prove physical boot. Phase 1 remains open until the expected PID 1 banner is observed on target hardware and the host's internal storage is verified unchanged afterward.
+Candidate 2 Physical Trial 2 proved EFI-stub execution, kernel initialization, embedded-initramfs execution, diagnostic PID 1 execution, and the visible console path on the tested host. The diagnostic PID 1 contains no shell and no mount or storage-write operation. Post-trial Windows reconciliation found the expected healthy disk roles and unchanged candidate hash.
 
-Trial 1 is evidence of a graphics/console qualification failure, not proof that the kernel failed to execute. Candidate 2 has not yet been physically tested.
+Phase 1 Ignition is complete for this hardware and candidate. This result does not establish universal hardware compatibility, persistence, Secure Boot compatibility, or a workstation userspace.
 
 The public repository does not yet contain a complete kernel-source patch series or the full qualified kernel configuration. The build wrapper alone is therefore insufficient to reproduce the currently installed binary from pristine upstream source. Treat this as an open provenance gate, not a completed reproducible-build claim.
 

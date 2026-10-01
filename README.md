@@ -1,7 +1,7 @@
 # AnarchI Port-Station
 
 **Portable Workstation System**<br>
-**AWV1 — Ignition Candidate 2**
+**AWV1 — Ignition Qualified Prototype**
 
 > Carry your system. Command the machine.
 
@@ -21,9 +21,10 @@ The current AWV1 milestone has completed these gates:
 - SHA-256 verification between the built image and the USB copy.
 - Preservation of the Windows boot configuration and internal disk partition map.
 - Physical Trial 1 reached a stable backlit black screen, demonstrating a visible-console qualification failure.
-- Candidate 2 adds EFI/simple framebuffer console support and an explicit diagnostic command line; it awaits physical retest.
+- Candidate 2 added EFI/simple framebuffer console support and an explicit diagnostic command line.
+- Physical Trial 2 displayed the exact diagnostic PID 1 pass banner; Windows and the qualified storage layout remained healthy afterward.
 
-The next unresolved gate is Candidate 2 physical native boot testing on the target hardware. Until that succeeds, this repository describes an **Ignition Candidate**, not a boot-qualified workstation.
+Phase 1 Ignition is complete on the tested host. This establishes a qualified native diagnostic boot, not a persistent or generally portable workstation. Phase 2 Habitat has not begun.
 
 ## What it can do now
 
@@ -31,6 +32,7 @@ The next unresolved gate is Candidate 2 physical native boot testing on the targ
 - Build a PE32+ x86-64 Linux EFI-stub kernel.
 - Embed a tiny initramfs that reaches PID 1 without mounting persistent storage.
 - Produce a diagnostic boot image intended to print an unmistakable pass banner when a qualified console is available.
+- Boot that diagnostic image to PID 1 with a visible console on the qualified test host.
 - Install that image into the standard removable-media UEFI fallback path on an already prepared FAT32 USB volume.
 - Reject Disk 0, non-USB, boot/system, offline, read-only, non-GPT, ambiguously mounted, or unstably identified targets in the included installer.
 - Validate the EFI image, stage it through the qualified volume identity, and verify the source, rollback copy, staged image, installed image, and any restoration with SHA-256.
@@ -84,7 +86,7 @@ The intended system properties are:
 
 Establish a native Windows/MSYS2 kernel toolchain, repair portability seams, generate `defconfig`, complete `prepare`, and produce a Linux 7.2.8 `bzImage`.
 
-### Phase 1 — Ignition: current
+### Phase 1 — Ignition: complete
 
 Boot the unsigned EFI-stub image from removable media, reach the embedded diagnostic PID 1, display the pass banner, and confirm that internal storage remains untouched.
 
@@ -96,7 +98,9 @@ Exit criteria:
 - no internal volume is mounted or modified;
 - Windows still boots normally afterward.
 
-### Phase 2 — Habitat
+All five criteria passed within the diagnostic evidence boundary during Candidate 2 Physical Trial 2 on October 1, 2026.
+
+### Phase 2 — Habitat: next, not begun
 
 Introduce a minimal portable root filesystem, shell, hardware inventory, deterministic service startup, and a controlled persistence model.
 
@@ -126,7 +130,7 @@ scripts/       Reproducible build and guarded USB installation tools
 tests/         Hardware-free behavioral safety contracts
 ```
 
-## First native boot test
+## Native boot test procedure
 
 Read [docs/BOOT-TEST.md](docs/BOOT-TEST.md) completely before testing. The short version is:
 
