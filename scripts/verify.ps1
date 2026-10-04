@@ -3,11 +3,11 @@ $root = Split-Path $PSScriptRoot -Parent
 
 Push-Location $root
 try {
-    git diff --check
+    git diff --check HEAD
     if ($LASTEXITCODE -ne 0) { throw 'Whitespace verification failed.' }
 
     $parseFailed = $false
-    Get-ChildItem scripts -Filter *.ps1 | ForEach-Object {
+    Get-ChildItem scripts, tests -Recurse -File -Include *.ps1, *.psm1 | ForEach-Object {
         $errors = $null
         [System.Management.Automation.Language.Parser]::ParseFile(
             $_.FullName,
@@ -27,10 +27,12 @@ try {
 
     $bash = Get-Command bash -ErrorAction SilentlyContinue
     if ($bash) {
-        & $bash.Source -n scripts/build-kernel-msys2.sh
-        & $bash.Source -n scripts/build-diagnostic-init.sh
-        & $bash.Source -n hooks/pre-push
-        if ($LASTEXITCODE -ne 0) { throw 'Shell syntax verification failed.' }
+        foreach ($file in @('scripts/build-kernel-msys2.sh', 'scripts/build-diagnostic-init.sh', 'tests/Build-Guard.Contracts.sh', 'hooks/pre-push')) {
+            & $bash.Source -n $file
+            if ($LASTEXITCODE -ne 0) { throw "Shell syntax verification failed: $file" }
+        }
+        & $bash.Source tests/Build-Guard.Contracts.sh
+        if ($LASTEXITCODE -ne 0) { throw 'Build guard contract verification failed.' }
     }
 
     Write-Host 'Port-Station verification passed.' -ForegroundColor Green

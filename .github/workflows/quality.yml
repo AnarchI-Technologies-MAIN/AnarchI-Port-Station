@@ -18,13 +18,28 @@ jobs:
     name: source-integrity
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v7
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          fetch-depth: 0
+          persist-credentials: false
       - name: Reject whitespace errors
-        run: git diff --check HEAD^ HEAD || git diff --check --cached
+        env:
+          PR_BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          PUSH_BASE_SHA: ${{ github.event.before }}
+        run: |
+          if [[ "${{ github.event_name }}" == "pull_request" ]]; then
+            git diff --check "$PR_BASE_SHA...HEAD"
+          elif [[ "$PUSH_BASE_SHA" != "0000000000000000000000000000000000000000" ]]; then
+            git diff --check "$PUSH_BASE_SHA...HEAD"
+          else
+            git show --check --format= HEAD
+          fi
       - name: Check shell syntax
-        run: bash -n scripts/*.sh hooks/pre-push
+        run: bash -n scripts/*.sh tests/*.sh hooks/pre-push
       - name: Lint shell tooling
-        run: shellcheck scripts/*.sh hooks/pre-push
+        run: shellcheck scripts/*.sh tests/*.sh hooks/pre-push
+      - name: Exercise Kbuild guard contracts
+        run: bash ./tests/Build-Guard.Contracts.sh
       - name: Scan prohibited public content
         shell: pwsh
         run: ./scripts/verify-public-safety.ps1
@@ -36,7 +51,9 @@ jobs:
     name: diagnostic-init
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v7
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
       - name: Install linker
         run: sudo apt-get update && sudo apt-get install --yes lld
       - name: Build storage-inert PID 1
@@ -50,12 +67,14 @@ jobs:
     name: powershell-safety
     runs-on: windows-latest
     steps:
-      - uses: actions/checkout@v7
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
       - name: Parse PowerShell scripts
         shell: pwsh
         run: |
           $failed = $false
-          Get-ChildItem scripts -Filter *.ps1 | ForEach-Object {
+          Get-ChildItem scripts, tests -Recurse -File -Include *.ps1, *.psm1 | ForEach-Object {
             $errors = $null
             [System.Management.Automation.Language.Parser]::ParseFile(
               $_.FullName,
@@ -73,7 +92,9 @@ jobs:
     name: installer-behavior
     runs-on: windows-latest
     steps:
-      - uses: actions/checkout@v7
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
       - name: Exercise guarded installer behavioral contracts
         shell: pwsh
         run: ./tests/Install-TestEfi.Behavior.Tests.ps1

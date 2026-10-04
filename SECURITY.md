@@ -6,7 +6,7 @@ AnarchI Port-Station is pre-release research software. It has not received an in
 
 ## Reporting
 
-Do not publish secrets, recovery keys, personal workstation inventories, or exploitable details in a public issue. Use the repository owner's private security-reporting channel when it becomes available.
+Do not publish secrets, recovery keys, personal workstation inventories, or exploitable details in a public issue. Use GitHub's **Report a vulnerability** option on the repository Security page for private reports.
 
 ## Explicit non-claims
 
